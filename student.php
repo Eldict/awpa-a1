@@ -22,6 +22,51 @@ function getStudent($db, $id)
     return mysqli_fetch_array($result);
 }
 
+/* Gets the student just before this one (the next smaller id).
+   Returns the row, or false if this is the first student. */
+function getPreviousStudent($db, $id)
+{
+    $query = "SELECT id, student_id FROM c25a1_students
+              WHERE id < $id ORDER BY id DESC LIMIT 1";
+
+    $result = mysqli_query($db, $query);
+
+    return mysqli_fetch_array($result);
+}
+
+/* Gets the student just after this one (the next bigger id).
+   Returns the row, or false if this is the last student. */
+function getNextStudent($db, $id)
+{
+    $query = "SELECT id, student_id FROM c25a1_students
+              WHERE id > $id ORDER BY id ASC LIMIT 1";
+
+    $result = mysqli_query($db, $query);
+
+    return mysqli_fetch_array($result);
+}
+
+/* Shows the previous and next links (the link text is the student's college id).
+   A link is left out if there is no student to link to. */
+function showPreviousNextLinks($previous, $next)
+{
+    echo "<p>";
+
+    if ($previous)
+    {
+        echo "<a href='student.php?id=" . $previous['id'] . "'>Previous: " . $previous['student_id'] . "</a>";
+    }
+
+    if ($previous && $next) echo " | ";
+
+    if ($next)
+    {
+        echo "<a href='student.php?id=" . $next['id'] . "'>Next: " . $next['student_id'] . "</a>";
+    }
+
+    echo "</p>";
+}
+
 /* Get the student id from the URL (if there is one) */
 $id = "";
 if (isset($_GET["id"])) $id = $_GET["id"];
@@ -45,6 +90,11 @@ if ($student)
     echo "<p>Student id: " . $student['student_id'] . "</p>";
     echo "<p>Address: " . $student['address'] . "</p>";
     echo "<p>Mark: " . $student['mark'] . "</p>";
+
+    /* $student['id'] comes from the database, so it is safe to use in the queries */
+    $previous = getPreviousStudent($db, $student['id']);
+    $next = getNextStudent($db, $student['id']);
+    showPreviousNextLinks($previous, $next);
 }
 else
 {
