@@ -15,5 +15,7 @@ include "accessControl.php";
 
 <p>Logged in as: <?php echo $_SESSION['userName']; ?></p>
 
+<?php include "footer.php"; ?>
+
 </body>
 </html>
