@@ -3,10 +3,10 @@
    Connects to the database. Every page that needs the database includes this file.
    Change the 4 values below when moving from XAMPP to the webdevcit.com server. */
 
-/* XAMPP settings (default XAMPP login is root with no password) */
+/* Local settings (database and user created on my own machine) */
 $dbHost = "localhost";
-$dbUser = "root";
-$dbPassword = "";
+$dbUser = "awpa";
+$dbPassword = "awpa123";
 $dbName = "awpa_a1";
 
 /* webdevcit.com settings - swap these in before uploading
