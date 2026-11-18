@@ -1,13 +1,10 @@
 <?php
-/* logout.php
-   Ends the session (logs the user out) and links back to the login page. */
+// logout.php
+// logs the user out
 
 session_start();
 
-/* delete all the session variables */
 $_SESSION = array();
-
-/* end the session */
 session_destroy();
 ?>
 <!DOCTYPE html>

@@ -1,18 +1,15 @@
 <?php
-/* processlogin.php
-   Receives the login and password from login.php (POST) and checks them
-   against the c25a1_users table.
-   - Details correct: save the user in the session and go to the home page.
-   - Details wrong: show an error message with a link back to the login page. */
+// processlogin.php
+// checks the login and password from login.php
+// if correct save user in session and go to home page
+// if wrong show error
 
 session_start();
 include "dbConnect.php";
 
-/* Looks for a user with this login and password.
-   Returns that user's row, or false if there is no match. */
+// find the user with this login and password
 function findUser($db, $login, $password)
 {
-    /* escape the text so it can't break the SQL query */
     $safeLogin = mysqli_real_escape_string($db, $login);
     $safePassword = mysqli_real_escape_string($db, $password);
 
@@ -21,11 +18,10 @@ function findUser($db, $login, $password)
 
     $result = mysqli_query($db, $query);
 
-    /* only one row expected, so no loop needed */
     return mysqli_fetch_array($result);
 }
 
-/* Saves the user's details in the session so other pages know they are logged in. */
+// save the user in the session
 function logUserIn($user)
 {
     $_SESSION['loggedin'] = true;
@@ -33,7 +29,7 @@ function logUserIn($user)
     $_SESSION['userName'] = $user['name'];
 }
 
-/* Show the error page for wrong details */
+// show error for wrong login
 function showLoginError()
 {
     echo "<h1>Login failed</h1>";
@@ -41,7 +37,7 @@ function showLoginError()
     echo "<p><a href='login.php'>Back to the login page</a></p>";
 }
 
-/* If someone opens this page without sending the form, just send them to the login page */
+// if the form wasn't sent I go back to the login page
 if (!isset($_POST['login']) || !isset($_POST['password']))
 {
     header("Location:login.php");

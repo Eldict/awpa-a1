@@ -1,7 +1,6 @@
 <?php
-/* footer.php
-   The footer menu. Included at the bottom of the home page and the student pages
-   so every page has exactly the same links. */
+// footer.php
+// footer links for the home page and student pages
 ?>
 <hr>
 <p>

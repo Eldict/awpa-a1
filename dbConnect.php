@@ -1,19 +1,17 @@
 <?php
-/* dbConnect.php
-   Connects to the database. Every page that needs the database includes this file.
-   Change the 4 values below when moving from XAMPP to the webdevcit.com server. */
+// dbConnect.php
+// connects to the database, included by every page that uses it
 
-/* Local settings (database and user created on my own machine) */
+// local xampp settings
 $dbHost = "localhost";
 $dbUser = "awpa";
 $dbPassword = "awpa123";
 $dbName = "awpa_a1";
 
-/* webdevcit.com settings - swap these in before uploading
-$dbUser = "R00XXXXXX_db";
-$dbPassword = "your_password";
-$dbName = "R00XXXXXX_db";
-*/
+// webdevcit.com settings, change to these before uploading
+// $dbUser = "R00XXXXXX_db";
+// $dbPassword = "your_password";
+// $dbName = "R00XXXXXX_db";
 
 $db = mysqli_connect($dbHost, $dbUser, $dbPassword);
 

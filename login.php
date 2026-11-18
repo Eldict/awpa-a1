@@ -1,7 +1,6 @@
 <?php
-/* login.php
-   Shows the login form. The form sends the login and password
-   (using POST) to processlogin.php, which checks them. */
+// login.php
+// login form, sends login and password to processlogin.php
 ?>
 <!DOCTYPE html>
 <html>

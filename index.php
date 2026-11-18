@@ -1,7 +1,6 @@
 <?php
-/* index.php
-   Home page. Only logged in users can see it.
-   The list of students is loaded with Ajax from getstudents.php. */
+// index.php
+// home page, the student list is loaded with ajax from getstudents.php
 
 include "accessControl.php";
 ?>
@@ -16,11 +15,10 @@ include "accessControl.php";
 
 <p>Logged in as: <?php echo $_SESSION['userName']; ?></p>
 
-<!-- Total number of votes, kept up to date by the JavaScript below -->
+<!-- total votes, updated every 2 seconds -->
 <p>Total votes: <span id="totalVotes">Loading ....</span></p>
 
-<!-- Menus to choose how the list is sorted. Changing a menu or clicking
-     Refresh loads the list again with Ajax. -->
+<!-- order and direction menus and refresh button -->
 <p>
     <select id="order" onchange="loadStudents()">
         <option value="id">Default Order by id</option>
@@ -36,17 +34,16 @@ include "accessControl.php";
     <button id="refresh" onclick="loadStudents()">Refresh</button>
 </p>
 
-<!-- The student list is put in here by the JavaScript below -->
+<!-- student list goes here -->
 <div id="studentView">Loading ....</div>
 
 <?php include "footer.php"; ?>
 
 <script>
-/* the Ajax request object (global so the callback function can use it) */
+// ajax request for the student list
 var x;
 
-/* Turns the menus and the Refresh button off (true) or back on (false),
-   so the user can't send another request while one is loading */
+// turn the menus and button off or on while loading
 function setControlsDisabled(disabled)
 {
     document.getElementById("order").disabled = disabled;
@@ -54,8 +51,7 @@ function setControlsDisabled(disabled)
     document.getElementById("refresh").disabled = disabled;
 }
 
-/* Asks getstudents.php for the list of students, sorted the way
-   the two menus say */
+// get the student list from getstudents.php using the menus
 function loadStudents()
 {
     var order = document.getElementById("order").value;
@@ -73,8 +69,7 @@ function loadStudents()
     x.send(null);
 }
 
-/* Called when the server replies. Puts the students into the page
-   and turns the menus and button back on. */
+// put the student list in the page and turn the menus back on
 function handleStudentsResponse()
 {
     if (x.readyState == 4 && x.status == 200)
@@ -84,11 +79,10 @@ function handleStudentsResponse()
     }
 }
 
-/* the Ajax request object for the total votes (separate from x so the two
-   requests don't get mixed up when they happen at the same time) */
+// separate ajax request for the total votes
 var statRequest;
 
-/* Asks getstat.php for the total number of votes */
+// get the total votes from getstat.php
 function loadTotalVotes()
 {
     statRequest = new XMLHttpRequest();
@@ -100,7 +94,7 @@ function loadTotalVotes()
     statRequest.send(null);
 }
 
-/* Called when the server replies. Puts the total into the page. */
+// put the total votes in the page
 function handleTotalVotesResponse()
 {
     if (statRequest.readyState == 4 && statRequest.status == 200)
@@ -109,12 +103,15 @@ function handleTotalVotesResponse()
     }
 }
 
-/* load the students as soon as the page is ready */
+// load the list when the page opens
 loadStudents();
 
-/* load the total votes now, then again every 2 seconds (2000 milliseconds) */
+// how often I refresh the total votes, in milliseconds
+var refreshTime = 2000;
+
+// load total votes now and then again every refreshTime
 loadTotalVotes();
-setInterval(loadTotalVotes, 2000);
+setInterval(loadTotalVotes, refreshTime);
 </script>
 
 </body>

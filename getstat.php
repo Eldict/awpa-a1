@@ -1,12 +1,12 @@
 <?php
-/* getstat.php
-   Ajax helper script. It sends back only the total number of votes in the
-   database. The home page (index.php) asks for it every 2 seconds. */
+// getstat.php
+// ajax script, sends back the total number of votes
+// index.php calls this every 2 seconds
 
 include "accessControl.php";
 include "dbConnect.php";
 
-/* Gets the total number of votes from the votes table */
+// get the total number of votes
 function getTotalVotes($db)
 {
     $query = "SELECT COUNT(vote) AS count FROM c25a1_votes";

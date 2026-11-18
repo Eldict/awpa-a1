@@ -1,16 +1,14 @@
 <?php
-/* add_vote_to_db.php
-   Receives a vote from the form on student.php (GET): userId, vote and studentId.
-   Adds the vote to the c25a1_votes table, says it was added and links back
-   to that student's page. */
+// add_vote_to_db.php
+// gets userId, vote and studentId from the vote form on student.php
+// adds the vote to the database and links back to the student
 
 include "accessControl.php";
 include "dbConnect.php";
 
-/* Adds one vote to the votes table. Returns true if it worked. */
+// add one vote to the votes table
 function addVote($db, $userId, $vote, $studentId)
 {
-    /* escape the values so they can't break the SQL query */
     $safeUserId = mysqli_real_escape_string($db, $userId);
     $safeVote = mysqli_real_escape_string($db, $vote);
     $safeStudentId = mysqli_real_escape_string($db, $studentId);
@@ -21,7 +19,7 @@ function addVote($db, $userId, $vote, $studentId)
     return mysqli_query($db, $query);
 }
 
-/* If the form wasn't sent, go back to the home page */
+// if the form wasn't sent I go back to the home page
 if (!isset($_GET['userId']) || !isset($_GET['vote']) || !isset($_GET['studentId']))
 {
     header("Location:index.php");

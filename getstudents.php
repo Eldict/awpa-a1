@@ -1,20 +1,15 @@
 <?php
-/* getstudents.php
-   Ajax helper script. It doesn't show a whole page, it only sends back the HTML
-   for the list of students. The home page (index.php) puts this HTML into the page.
-   Each student is shown as an avatar and student id that link to their student page.
-   The order and direction of the list come from the URL, e.g.
-   getstudents.php?order=average&direction=desc
-   order can be: id (default), average, count
-   direction can be: asc (default), desc */
+// getstudents.php
+// ajax script, sends back the html for the student list
+// index.php puts this into the page
+// order = id, average or count
+// direction = asc or desc
 
 include "accessControl.php";
 include "dbConnect.php";
 include "voteDisplay.php";
 
-/* Turns the order from the URL into the SQL to sort by.
-   Only the values listed here are allowed, so nothing from the URL is put into
-   the query directly. Anything unknown sorts by id. */
+// get the sql for the order, only these 3 are allowed
 function getOrderSql($order)
 {
     if ($order == "average") return "AVG(vote)";
@@ -24,7 +19,7 @@ function getOrderSql($order)
     return "c25a1_students.id";
 }
 
-/* Turns the direction from the URL into ASC or DESC (default ASC) */
+// get ASC or DESC
 function getDirectionSql($direction)
 {
     if ($direction == "desc") return "DESC";
@@ -32,9 +27,8 @@ function getDirectionSql($direction)
     return "ASC";
 }
 
-/* Gets all the students together with their average vote and number of votes,
-   sorted as asked. A LEFT JOIN is used so students with no votes are
-   still included (their average will be NULL). Returns the query result. */
+// get all students with their average vote and vote count
+// LEFT JOIN so students with no votes still show up
 function getAllStudents($db, $order, $direction)
 {
     $orderSql = getOrderSql($order);
@@ -49,8 +43,7 @@ function getAllStudents($db, $order, $direction)
     return mysqli_query($db, $query);
 }
 
-/* Makes the HTML for one student: the avatar and student id, both inside a link
-   to that student's page, then their average vote (stars) and number of votes. */
+// make the html for one student, avatar and id link to the student page
 function makeStudentHtml($student)
 {
     $html = "<div>";
@@ -65,7 +58,7 @@ function makeStudentHtml($student)
     return $html;
 }
 
-/* Get the order and direction from the URL (if they are there) */
+// order and direction from the url
 $order = "id";
 if (isset($_GET["order"])) $order = $_GET["order"];
 

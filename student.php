@@ -1,15 +1,12 @@
 <?php
-/* student.php
-   Shows the details of one student.
-   The id of the student (the id field in c25a1_students) is passed in the URL,
-   e.g. student.php?id=3 */
+// student.php
+// shows one student, the id comes from the url (student.php?id=3)
 
 include "accessControl.php";
 include "dbConnect.php";
 include "voteDisplay.php";
 
-/* Gets the student with this id from the database.
-   Returns the row, or false if there is no such student. */
+// get the student with this id
 function getStudent($db, $id)
 {
     $safeId = mysqli_real_escape_string($db, $id);
@@ -19,12 +16,10 @@ function getStudent($db, $id)
 
     $result = mysqli_query($db, $query);
 
-    /* only one row expected, so no loop needed */
     return mysqli_fetch_array($result);
 }
 
-/* Gets the student just before this one (the next smaller id).
-   Returns the row, or false if this is the first student. */
+// get the previous student (next smaller id)
 function getPreviousStudent($db, $id)
 {
     $query = "SELECT id, student_id FROM c25a1_students
@@ -35,8 +30,7 @@ function getPreviousStudent($db, $id)
     return mysqli_fetch_array($result);
 }
 
-/* Gets the student just after this one (the next bigger id).
-   Returns the row, or false if this is the last student. */
+// get the next student (next bigger id)
 function getNextStudent($db, $id)
 {
     $query = "SELECT id, student_id FROM c25a1_students
@@ -47,8 +41,7 @@ function getNextStudent($db, $id)
     return mysqli_fetch_array($result);
 }
 
-/* Gets the average vote and number of votes for this student.
-   Returns a row with 'average' (NULL if no votes) and 'count'. */
+// get the average vote and vote count for this student
 function getStudentVotes($db, $id)
 {
     $query = "SELECT AVG(vote) AS average, COUNT(vote) AS count
@@ -59,8 +52,7 @@ function getStudentVotes($db, $id)
     return mysqli_fetch_array($result);
 }
 
-/* Gets the vote the logged in user gave this student.
-   Returns the row, or false if they haven't voted for this student yet. */
+// get the logged in user's vote for this student
 function getUserVote($db, $studentId, $userId)
 {
     $query = "SELECT vote FROM c25a1_votes
@@ -71,16 +63,15 @@ function getUserVote($db, $studentId, $userId)
     return mysqli_fetch_array($result);
 }
 
-/* Shows the form for voting: a menu with the votes 0 to 5 and a Vote button.
-   The user id and student id are sent too (hidden), all by GET to add_vote_to_db.php */
-function showVoteForm($studentId, $userId)
+// vote form, sends userId, studentId and vote to add_vote_to_db.php
+function showVoteForm($studentId, $userId, $maxVote)
 {
     echo "<form action='add_vote_to_db.php' method='GET'>";
     echo "<input type='hidden' name='userId' value='$userId'>";
     echo "<input type='hidden' name='studentId' value='$studentId'>";
     echo "Your vote: <select name='vote'>";
 
-    for ($vote = 0; $vote <= 5; $vote++)
+    for ($vote = 0; $vote <= $maxVote; $vote++)
     {
         echo "<option value='$vote'>$vote</option>";
     }
@@ -90,9 +81,8 @@ function showVoteForm($studentId, $userId)
     echo "</form>";
 }
 
-/* Shows the student's average stars and vote count, then either the logged in
-   user's own vote, or the vote form if they haven't voted for this student yet */
-function showVotes($db, $studentId, $userId)
+// show stars and vote count, then the user's vote or the vote form
+function showVotes($db, $studentId, $userId, $maxVote)
 {
     $votes = getStudentVotes($db, $studentId);
 
@@ -106,12 +96,11 @@ function showVotes($db, $studentId, $userId)
     }
     else
     {
-        showVoteForm($studentId, $userId);
+        showVoteForm($studentId, $userId, $maxVote);
     }
 }
 
-/* Shows the previous and next links (the link text is the student's college id).
-   A link is left out if there is no student to link to. */
+// previous and next links, left out if there is no student
 function showPreviousNextLinks($previous, $next)
 {
     echo "<p>";
@@ -131,7 +120,10 @@ function showPreviousNextLinks($previous, $next)
     echo "</p>";
 }
 
-/* Get the student id from the URL (if there is one) */
+// highest vote someone can give
+$maxVote = 5;
+
+// student id from the url
 $id = "";
 if (isset($_GET["id"])) $id = $_GET["id"];
 
@@ -155,9 +147,7 @@ if ($student)
     echo "<p>Address: " . $student['address'] . "</p>";
     echo "<p>Mark: " . $student['mark'] . "</p>";
 
-    /* $student['id'] comes from the database and the user id from the session,
-       so both are safe to use in the queries */
-    showVotes($db, $student['id'], $_SESSION['userId']);
+    showVotes($db, $student['id'], $_SESSION['userId'], $maxVote);
 
     $previous = getPreviousStudent($db, $student['id']);
     $next = getNextStudent($db, $student['id']);
