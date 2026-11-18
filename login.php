@@ -10,7 +10,7 @@
 </head>
 <body>
 
-<h1>Student Profiles - Login</h1>
+<h1>Student Profiles Login</h1>
 
 <form action="processlogin.php" method="post">
 
