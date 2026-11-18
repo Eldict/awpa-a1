@@ -6,6 +6,7 @@
 
 include "accessControl.php";
 include "dbConnect.php";
+include "voteDisplay.php";
 
 /* Gets the student with this id from the database.
    Returns the row, or false if there is no such student. */
@@ -44,6 +45,69 @@ function getNextStudent($db, $id)
     $result = mysqli_query($db, $query);
 
     return mysqli_fetch_array($result);
+}
+
+/* Gets the average vote and number of votes for this student.
+   Returns a row with 'average' (NULL if no votes) and 'count'. */
+function getStudentVotes($db, $id)
+{
+    $query = "SELECT AVG(vote) AS average, COUNT(vote) AS count
+              FROM c25a1_votes WHERE student_id = $id";
+
+    $result = mysqli_query($db, $query);
+
+    return mysqli_fetch_array($result);
+}
+
+/* Gets the vote the logged in user gave this student.
+   Returns the row, or false if they haven't voted for this student yet. */
+function getUserVote($db, $studentId, $userId)
+{
+    $query = "SELECT vote FROM c25a1_votes
+              WHERE student_id = $studentId AND user_id = $userId";
+
+    $result = mysqli_query($db, $query);
+
+    return mysqli_fetch_array($result);
+}
+
+/* Shows the form for voting: a menu with the votes 0 to 5 and a Vote button.
+   The user id and student id are sent too (hidden), all by GET to add_vote_to_db.php */
+function showVoteForm($studentId, $userId)
+{
+    echo "<form action='add_vote_to_db.php' method='GET'>";
+    echo "<input type='hidden' name='userId' value='$userId'>";
+    echo "<input type='hidden' name='studentId' value='$studentId'>";
+    echo "Your vote: <select name='vote'>";
+
+    for ($vote = 0; $vote <= 5; $vote++)
+    {
+        echo "<option value='$vote'>$vote</option>";
+    }
+
+    echo "</select> ";
+    echo "<input type='submit' value='Vote'>";
+    echo "</form>";
+}
+
+/* Shows the student's average stars and vote count, then either the logged in
+   user's own vote, or the vote form if they haven't voted for this student yet */
+function showVotes($db, $studentId, $userId)
+{
+    $votes = getStudentVotes($db, $studentId);
+
+    echo "<p>" . makeStarsHtml($votes['average']) . "<br>" . makeVoteCountText($votes['count']) . "</p>";
+
+    $userVote = getUserVote($db, $studentId, $userId);
+
+    if ($userVote)
+    {
+        echo "<p>Your vote: " . $userVote['vote'] . "</p>";
+    }
+    else
+    {
+        showVoteForm($studentId, $userId);
+    }
 }
 
 /* Shows the previous and next links (the link text is the student's college id).
@@ -91,7 +155,10 @@ if ($student)
     echo "<p>Address: " . $student['address'] . "</p>";
     echo "<p>Mark: " . $student['mark'] . "</p>";
 
-    /* $student['id'] comes from the database, so it is safe to use in the queries */
+    /* $student['id'] comes from the database and the user id from the session,
+       so both are safe to use in the queries */
+    showVotes($db, $student['id'], $_SESSION['userId']);
+
     $previous = getPreviousStudent($db, $student['id']);
     $next = getNextStudent($db, $student['id']);
     showPreviousNextLinks($previous, $next);
