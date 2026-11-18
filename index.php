@@ -16,6 +16,9 @@ include "accessControl.php";
 
 <p>Logged in as: <?php echo $_SESSION['userName']; ?></p>
 
+<!-- Total number of votes, kept up to date by the JavaScript below -->
+<p>Total votes: <span id="totalVotes">Loading ....</span></p>
+
 <!-- Menus to choose how the list is sorted. Changing a menu or clicking
      Refresh loads the list again with Ajax. -->
 <p>
@@ -81,8 +84,37 @@ function handleStudentsResponse()
     }
 }
 
+/* the Ajax request object for the total votes (separate from x so the two
+   requests don't get mixed up when they happen at the same time) */
+var statRequest;
+
+/* Asks getstat.php for the total number of votes */
+function loadTotalVotes()
+{
+    statRequest = new XMLHttpRequest();
+
+    statRequest.open("GET", "getstat.php");
+
+    statRequest.onreadystatechange = handleTotalVotesResponse;
+
+    statRequest.send(null);
+}
+
+/* Called when the server replies. Puts the total into the page. */
+function handleTotalVotesResponse()
+{
+    if (statRequest.readyState == 4 && statRequest.status == 200)
+    {
+        document.getElementById("totalVotes").innerHTML = statRequest.responseText;
+    }
+}
+
 /* load the students as soon as the page is ready */
 loadStudents();
+
+/* load the total votes now, then again every 2 seconds (2000 milliseconds) */
+loadTotalVotes();
+setInterval(loadTotalVotes, 2000);
 </script>
 
 </body>
